@@ -1,0 +1,32 @@
+.sidebar-wrapper {
+    display: flex;
+    flex-direction: column;
+    background-color: #2f3233;
+    height: 100%;
+    min-height: 100vh;
+}
+
+.sidebar-menu-item {
+    color: #CEE4E6;
+    margin-left: 3rem;
+}
+
+.button-wrapper {
+    margin-top: 2rem;
+    padding: 0.5rem;
+}
+
+.button-wrapper:hover {
+    background-color: #464a4b;
+}
+
+.sidebar-menu-item-wrapper {
+    display: flex;
+    text-decoration: none;
+}
+
+.logo {
+    margin-left: 3rem;
+    margin-right: 3rem;
+    margin-top: 1rem;
+}

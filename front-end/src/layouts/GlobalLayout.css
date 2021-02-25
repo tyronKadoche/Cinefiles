@@ -1,0 +1,7 @@
+.global-layout-wrapper {
+    display: flex;
+}
+
+.body-page-wrapper {
+    margin: 1rem;
+}

@@ -1,0 +1,24 @@
+.login-wrapper {
+    width: 30%;
+    margin: 0 auto;
+    margin-top: 10rem;
+    text-align: center;
+    background-color: #2f3233;
+    border-radius: 12px;
+    padding: 2rem;
+        box-shadow: 0 0 120px -20px;
+}
+
+.login-title {
+    text-align: center;
+    color: #ffffff;
+}
+
+.formular-wrapper {
+    width: 100%;
+    margin-top: 2rem;
+}
+
+.login-input {
+    color: #ffffff;
+}
