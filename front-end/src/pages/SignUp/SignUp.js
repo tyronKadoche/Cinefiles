@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { useHistory } from "react-router-dom";
 import { FormControl, InputAdornment, IconButton, Input, Button, makeStyles } from '@material-ui/core/';
 import { Visibility, VisibilityOff } from '@material-ui/icons/';
@@ -24,16 +25,30 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-
-
 export default function SignUp() {
-    let history = useHistory();
     const classes = useStyles();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [password2, setPassword2] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    let history = useHistory();
 
+    function register() {
+        const body = {
+            "email": email,
+            "password": password
+        }
+        axios.post('http://localhost:5000/cinefiles-12/europe-west1/api/register', body)
+            .then(function (response) {
+                console.log(response);
+                if (response.status === 200) {
+                    history.push('/login');
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
 
     return (
         <div class="login-wrapper">
@@ -87,7 +102,10 @@ export default function SignUp() {
                     }
                 />
             </FormControl>
-            <Button className={classes.formularValidationButton} onClick={() => history.push('/login')} disabled={email.length !== 0 && password.length !== 0 ? false : true}>S'inscrire</Button>
+            <Button className={classes.formularValidationButton}
+                    onClick={() => register()}
+                    disabled={email.length !== 0 && password.length !== 0  && password === password2 ? false : true}
+            >S'inscrire</Button>
         </div>
     );
 }

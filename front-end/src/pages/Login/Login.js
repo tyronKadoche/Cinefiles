@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { useHistory } from "react-router-dom";
 import { FormControl, InputAdornment, IconButton, Input, Button, makeStyles  } from '@material-ui/core/';
 import { Visibility, VisibilityOff } from '@material-ui/icons/';
@@ -38,6 +39,23 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
 
+    function login() {
+        const body = {
+            email: "tyrondema@hotmail.fr", // email,
+            password: "tyrondema02", // password
+        }
+        console.log('body = ', body);
+        axios.post('http://localhost:5000/cinefiles-12/europe-west1/api/login', body)
+            .then(function (response) {
+                localStorage.setItem('token', response.data.token );
+                if (response.status === 200) {
+                    history.push('/acceuil')
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
 
     return (
         <div class="login-wrapper">
@@ -71,7 +89,7 @@ export default function Login() {
                     }
                 />
             </FormControl>
-            <Button className={classes.formularValidationButton} onClick={() => history.push('/acceuil')} disabled={email.length !== 0 && password.length !== 0 ? false : true}>Valider</Button>
+            <Button className={classes.formularValidationButton} onClick={() => login()} disabled={email.length !== 0 && password.length !== 0 ? false : true}>Valider</Button>
             <p className={classes.signUpText} onClick={() => history.push('/sign-up')}>s'inscrire</p>
         </div>
     );
