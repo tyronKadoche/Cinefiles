@@ -13,7 +13,7 @@ export default function GlobalLayout() {
                     <Sidebar />
                 </Grid>
                 <Grid item xs={9} lg={10}>
-                    <div class="body-page-wrapper">
+                    <div>
                         <Switch>
                             {routes.map((element) => (
                                 <Route path={element.route}>

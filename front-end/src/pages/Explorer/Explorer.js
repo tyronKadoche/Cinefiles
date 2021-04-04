@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { makeStyles } from '@material-ui/core/styles';
-import { Grid, Card, CardHeader, CardMedia, CardContent, CardActions, CardActionArea, CircularProgress, IconButton, Button, Modal } from '@material-ui/core';
+import { Grid, Card, CardHeader, CardMedia, CardActions, CardActionArea, CircularProgress, IconButton, Button, Modal } from '@material-ui/core';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import StarIcon from '@material-ui/icons/Star';
 import AddToQueueIcon from '@material-ui/icons/AddToQueue';
 import {infoModal} from './modals';
 
 const useStyles = makeStyles(() => ({
+    margin1: {
+        margin: "1rem",
+    },
     wrapper: {
         flexGrow: 1,
     },
@@ -40,7 +43,7 @@ const useStyles = makeStyles(() => ({
     },
     modalCardWrapper: {
         width: "50rem",
-        marginTop: "20%",
+        marginTop: "10%",
         marginLeft: "auto",
         marginRight: "auto",
         backgroundColor: "transparent",
@@ -103,7 +106,7 @@ export default function Explorer() {
             </Modal>
            {
            moviesTable ?
-           <Grid container>
+                    <Grid container className={classes.margin1}>
                { moviesTable.map((movie) => (
                    <Grid className={classes.wrapper} item xs={12} md={6} lg={4} spacing={2}>
                        <Card className={classes.card}>
