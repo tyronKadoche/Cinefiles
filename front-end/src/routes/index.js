@@ -2,15 +2,14 @@ import HomeIcon from '@material-ui/icons/Home';
 import LocalMoviesIcon from '@material-ui/icons/LocalMovies';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import EmailIcon from '@material-ui/icons/Email';
-import SubscriptionsIcon from '@material-ui/icons/Subscriptions';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 
-import { Home, Explorer, Notifications, Messages, WatchList, Profil } from "../pages/index";
+import { Home, Explorer, Notifications, Messages, Profil } from "../pages/index";
 
 const routes = [
     {
         id: 0,
-        name: "Acceuil",
+        name: "Accueil",
         icon: <HomeIcon/>,
         route: "/acceuil",
         component: <Home/>,
@@ -38,13 +37,6 @@ const routes = [
     },
     {
         id: 4,
-        name: "Watch list",
-        icon: <SubscriptionsIcon />,
-        route: "/watch-list",
-        component: <WatchList />,
-    },
-    {
-        id: 5,
         name: "Profile",
         icon: <AccountCircleIcon />,
         route: "/profile",

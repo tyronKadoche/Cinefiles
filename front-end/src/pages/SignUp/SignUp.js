@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
     },
     formularValidationButton: {
         backgroundColor: "#cee4e6",
-        color: "#2f3233",
+        color: "#2b353e",
         border: "none",
         marginTop: "2rem",
         borderRadius: "12px",

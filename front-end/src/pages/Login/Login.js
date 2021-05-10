@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
     },
     formularValidationButton: {
         backgroundColor: "#cee4e6",
-        color: "#2f3233",
+        color: "#2b353e",
         border: "none",
         marginTop: "2rem",
         borderRadius: "12px",
@@ -41,8 +41,8 @@ export default function Login() {
 
     function login() {
         const body = {
-            email: "tyrondema@hotmail.fr", // email,
-            password: "tyrondema02", // password
+            email: email,
+            password: password,
         }
         console.log('body = ', body);
         axios.post('http://localhost:5000/cinefiles-12/europe-west1/api/login', body)

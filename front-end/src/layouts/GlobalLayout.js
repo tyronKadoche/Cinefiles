@@ -9,10 +9,10 @@ export default function GlobalLayout() {
     return (
         <Grid class="global-layout-wrapper" container >
             <Router>
-                <Grid item xs={3} lg={2}>
+                <Grid item xs={2} style={{ minWidth: "18rem"}}>
                     <Sidebar />
                 </Grid>
-                <Grid item xs={9} lg={10}>
+                <Grid item xs={10}>
                     <div>
                         <Switch>
                             {routes.map((element) => (

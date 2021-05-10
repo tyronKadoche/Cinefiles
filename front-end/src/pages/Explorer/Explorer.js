@@ -9,16 +9,18 @@ import {infoModal} from './modals';
 
 const useStyles = makeStyles(() => ({
     margin1: {
-        margin: "1rem",
+        marginTop: "1rem",
+        marginBottom: "1rem"
     },
     wrapper: {
         flexGrow: 1,
+        textAlign: "-webkit-center",
     },
     card: {
         maxWidth: 345,
         marginBottom: "2rem",
         color: "#ffffff",
-        backgroundColor: "#2f3233",
+        backgroundColor: "#2b353e",
         boxShadow: "0 0 20px 0px black",
     },
     media: {
@@ -34,7 +36,7 @@ const useStyles = makeStyles(() => ({
     },
     loadMoreButton: {
         color: "#cee4e6",
-        backgroundColor: "#2f3233",
+        backgroundColor: "#2b353e",
         border: "none",
         marginTop: "2rem",
         borderRadius: "12px",
@@ -100,7 +102,6 @@ export default function Explorer() {
 
     return (
         <div>
-            <h1>EXPLORER</h1>
             <Modal open={openModal} onClose={() => handleModal({})}>
                 {infoModal(actualMovie, classes)}
             </Modal>

@@ -1,7 +1,7 @@
 .sidebar-wrapper {
     display: flex;
     flex-direction: column;
-    background-color: #2f3233;
+    background-color: #2b353e;
     height: 100%;
     min-height: 100vh;
 }
