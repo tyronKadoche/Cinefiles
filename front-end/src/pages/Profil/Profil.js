@@ -10,7 +10,6 @@ import { WatchList } from "../../pages/"
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 
 
-
 const useStyles = makeStyles((theme) => ({
     wrapper: {
         borderRadius: "8px",
@@ -106,7 +105,7 @@ export default function Profil() {
     function getUserData() {
         axios.get(`http://localhost:5000/cinefiles-12/europe-west1/api/user`, config)
             .then(function (res) {
-              console.log("res = ", res);
+              console.log("user data res = ", res);
               setPseudo(res.data.pseudo);
               setBackgroundPic(res.data.backgroundPic);
               setBirth(res.data.birth);

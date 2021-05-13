@@ -87,9 +87,16 @@ export default function Login() {
                             </IconButton>
                         </InputAdornment>
                     }
+                    onKeyPress={(event) => {
+                        if (event.charCode === 13) login()
+                    }}
                 />
             </FormControl>
-            <Button className={classes.formularValidationButton} onClick={() => login()} disabled={email.length !== 0 && password.length !== 0 ? false : true}>Valider</Button>
+            <Button
+                className={classes.formularValidationButton}
+                onClick={() => login()}
+                disabled={email.length !== 0 && password.length !== 0 ? false : true}
+            >Valider</Button>
             <p className={classes.signUpText} onClick={() => history.push('/sign-up')}>s'inscrire</p>
         </div>
     );

@@ -57,3 +57,28 @@ exports.putUserData = (req, res) => {
     //     });
 
 }
+
+exports.postMyWatchlist = (req, res) => {
+  const userId = req.user.userId;
+  const movieId = req.body.movieId;
+
+  db.collection(`/user/${userId}/watchlist`).doc().set({movieId})
+    .then((doc) => {
+      return res.status(200).json(doc.data());
+    })
+    .catch(err => console.error(err))
+}
+
+exports.getMyWatchlist = (req, res) => {
+  const userId = req.user.userId;
+  let movieTable = []
+
+  db.collection(`/user/${userId}/watchlist`).get()
+    .then((doc) => {
+      doc.forEach((movie) => {
+        movieTable.push(movie.data().movieId)
+      })
+      return res.status(200).json(movieTable);
+    })
+    .catch(err => console.error(err))
+}

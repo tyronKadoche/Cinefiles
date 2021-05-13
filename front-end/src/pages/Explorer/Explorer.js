@@ -5,7 +5,8 @@ import { Grid, Card, CardHeader, CardMedia, CardActions, CardActionArea, Circula
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import StarIcon from '@material-ui/icons/Star';
 import AddToQueueIcon from '@material-ui/icons/AddToQueue';
-import {infoModal} from './modals';
+import { infoModal } from './modals';
+import Rating from '@material-ui/lab/Rating';
 
 const useStyles = makeStyles(() => ({
     margin1: {
@@ -22,6 +23,10 @@ const useStyles = makeStyles(() => ({
         color: "#ffffff",
         backgroundColor: "#2b353e",
         boxShadow: "0 0 20px 0px black",
+        height: "23rem",
+    },
+    title: {
+        maxHeight: "5rem",
     },
     media: {
         height: 0,
@@ -60,6 +65,18 @@ const useStyles = makeStyles(() => ({
         backgroundColor: "transparent",
         backdropFilter: "blur(30px)"
     },
+    rateModalWrapper: {
+        color: "#ffffff",
+        height: "auto",
+        margin: "30% auto",
+        display: "flex",
+        maxWidth: "16rem",
+        minHeight: "5rem",
+        backdropFilter: "blur(30px)",
+        backgroundColor: "transparent",
+        padding: "3rem 2rem 0rem 3rem",
+        borderRadius: "8px",
+    },
     details: {
         display: 'flex',
         flexDirection: 'column',
@@ -73,14 +90,17 @@ const useStyles = makeStyles(() => ({
 
 export default function Explorer() {
     const classes = useStyles();
-    const myApiKey = 'c0312d6e4f0a54c83d85d753e88182ce'; //9f2b4da1f683c576d9af80887567e2c7
+    const myApiKey = '9f2b4da1f683c576d9af80887567e2c7'; //9f2b4da1f683c576d9af80887567e2c7
     const [moviesTable , setMoviesTable] = useState([]);
     const [actualMovie, setActualMovie] = useState({});
     const [openModal, setopenModal] = useState(false);
+    const [openRateModal, setOpenRateModal] = useState(false);
     const [page, setPage] = useState(1);
+    const token = localStorage.token;
 
     useEffect(() => {
         getMoviesList();
+        createSession();
     }, []);
 
     function getMoviesList() {
@@ -91,8 +111,31 @@ export default function Explorer() {
             newMovieTable = res.data.results;
             setMoviesTable(moviesTable.concat(newMovieTable))
             setPage(page + 1);
-            console.log('moviesTable = ', moviesTable)
         })
+    }
+
+    function createSession() {
+        const body = {
+            "request_token": "6bc047b88f669d1fb86574f06381005d93d3517a"
+        }
+
+        axios.post(`https://api.themoviedb.org/3/authentication/session/new?&api_key=${myApiKey}`, body)
+            .then(res => {
+                return res.status
+            })
+    }
+
+    function rateMovie(movie, rate) {
+        console.log('rate = ', rate)
+        const body = {
+            "value": rate
+        }
+        axios.post(`https://api.themoviedb.org/3/movie/${movie.id}/rating?&api_key=${myApiKey}`, body)
+            .then(res => {
+                if (res.status === 200) {
+                    getMoviesList();
+                }
+            })
     }
 
     function handleModal(movie) {
@@ -100,37 +143,69 @@ export default function Explorer() {
         setopenModal(!openModal)
     }
 
+    function handleRateModal(movie) {
+        setActualMovie(movie);
+        setOpenRateModal(!openRateModal)
+    }
+
+    function addToWatchlist(movieId) {
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }
+        const body = {
+            movieId: movieId
+        }
+        axios.post(`http://localhost:5000/cinefiles-12/europe-west1/api/user/watchlist`, body, config)
+            .then(res => {
+                console.log('res.data from add to watchlist = ', res.data)
+            })
+    }
+
     return (
         <div>
             <Modal open={openModal} onClose={() => handleModal({})}>
                 {infoModal(actualMovie, classes)}
             </Modal>
+            <Modal open={openRateModal} onClose={() => handleRateModal({})}>
+                <div className={classes.rateModalWrapper}>
+                    <Rating
+                        name="customized-10"
+                        value={actualMovie.vote_average}
+                        max={10}
+                        onChange={(event, newValue) => {
+                            rateMovie(actualMovie, newValue)
+                        }}
+                    />
+                </div>
+            </Modal>
            {
            moviesTable ?
-                    <Grid container className={classes.margin1}>
+            <Grid container className={classes.margin1}>
                { moviesTable.map((movie) => (
                    <Grid className={classes.wrapper} item xs={12} md={6} lg={4} spacing={2}>
                        <Card className={classes.card}>
-                            <CardHeader title={movie.title}/>
-                           <CardActionArea onClick={() => handleModal(movie)}>
+                            <CardHeader className={classes.title} title={movie.title}/>
+                            <CardActionArea onClick={() => handleModal(movie)}>
                                 <CardMedia
                                 className={classes.media}
                                 image={`https://image.tmdb.org/t/p/w500${movie.backdrop_path}`}
                                 onClick={null}
                                 />
                             </CardActionArea>
-                           <CardActions disableSpacing>
+                            <CardActions disableSpacing>
                                <h3>note: {movie.vote_average}</h3>
                                <IconButton className={classes.actionIcon} aria-label="add to favorites">
                                    <FavoriteIcon />
                                </IconButton>
                                <IconButton className={classes.actionIcon} aria-label="rated">
-                                   <StarIcon />
+                                   <StarIcon onClick={() => handleRateModal(movie)} />
                                </IconButton>
-                               <IconButton className={classes.actionIcon} aria-label="add to watchlist">
+                               <IconButton className={classes.actionIcon} aria-label="add to watchlist" onClick={() => addToWatchlist(movie.id)}>
                                    <AddToQueueIcon />
                                </IconButton>
-                           </CardActions>
+                            </CardActions>
                         </Card>
                     </Grid>
                     )

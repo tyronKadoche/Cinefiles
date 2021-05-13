@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Grid, Card, CardHeader, CardMedia, CardContent, CardActions, CardActionArea, CircularProgress, IconButton, Button } from '@material-ui/core';
 import Rating from '@material-ui/lab/Rating';
 
-
 function infoModal(movie, classes) {
     return (
         <div className={classes.modalCardWrapper}>
@@ -25,10 +24,4 @@ function infoModal(movie, classes) {
     )
 }
 
-function rateModal(movie) {
-    <Grid container>
-        <Rating name="customized-10" defaultValue={2} max={10} />
-    </Grid>
-}
-
-export { infoModal, rateModal };
+export { infoModal };

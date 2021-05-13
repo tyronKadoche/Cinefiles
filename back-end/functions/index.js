@@ -4,7 +4,7 @@ const cors = require("cors");
 const app = express();
 
 const { validateFirebaseIdToken } = require("./verifyIdToken")
-const { getUserData, putUserData } = require("./user");
+const { getUserData, putUserData, postMyWatchlist, getMyWatchlist } = require("./user");
 const config = require("./config");
 const {admin, db, fb} = require("./admin");
 
@@ -77,5 +77,8 @@ app.post(
 app.get("/user", validateFirebaseIdToken, getUserData);
 
 app.post("/user", validateFirebaseIdToken, putUserData);
+
+app.post("/user/watchlist", validateFirebaseIdToken, postMyWatchlist);
+app.get("/user/watchlist", validateFirebaseIdToken, getMyWatchlist);
 
 exports.api = functions.region("europe-west1").https.onRequest(app);
