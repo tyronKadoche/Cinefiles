@@ -18,7 +18,7 @@ exports.getUserData = (req, res) => {
           status: error.code,
         });
       })
-    }
+}
 
 exports.putUserData = (req, res) => {
   let userId = req.user.userId;

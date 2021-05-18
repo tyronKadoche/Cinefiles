@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Grid, Card, CardHeader, CardMedia, CardContent, CardActions, CardActionArea, CircularProgress, IconButton, Button } from '@material-ui/core';
+import React from 'react';
+import { Card, CardMedia, CardContent, } from '@material-ui/core';
 import Rating from '@material-ui/lab/Rating';
 
 function infoModal(movie, classes) {

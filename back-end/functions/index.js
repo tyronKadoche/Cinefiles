@@ -7,6 +7,7 @@ const { validateFirebaseIdToken } = require("./verifyIdToken")
 const { getUserData, putUserData, postMyWatchlist, getMyWatchlist } = require("./user");
 const config = require("./config");
 const {admin, db, fb} = require("./admin");
+const { getTimeline, postTimeline } = require("./timeline");
 
 app.use(cors({origin: true}));
 
@@ -74,11 +75,17 @@ app.post(
   }
 );
 
+/* USER */
 app.get("/user", validateFirebaseIdToken, getUserData);
-
 app.post("/user", validateFirebaseIdToken, putUserData);
 
+/* WATCHLIST */
 app.post("/user/watchlist", validateFirebaseIdToken, postMyWatchlist);
 app.get("/user/watchlist", validateFirebaseIdToken, getMyWatchlist);
+// to do delete
+
+/* TIMELINE */
+app.get("/timeline", validateFirebaseIdToken, getTimeline);
+app.post("/timeline", validateFirebaseIdToken, postTimeline);
 
 exports.api = functions.region("europe-west1").https.onRequest(app);

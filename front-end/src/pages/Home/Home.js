@@ -1,6 +1,7 @@
-import React from 'react';
-import { TextField, makeStyles, Button, Grid } from '@material-ui/core';
+import React, { useState, useEffect } from 'react';
+import { TextField, makeStyles, Button, Grid, Avatar } from '@material-ui/core';
 import Trend from '../../components/Trend'
+import axios from 'axios';
 import "./home.css"
 
 const useStyles = makeStyles((theme) => ({
@@ -11,33 +12,131 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: "#2b353e",
         display: "flex",
         float: "right",
-        marginTop: "1rem",
+        margin: "1rem 0",
+        marginRight: "1rem",
         borderRadius: "12px",
-        color: "#ffffff"
+        color: "#ffffff",
     },
     borderRight: {
         borderRight: "1px solid #2b353e",
-        paddingRight: "1rem",
-    }
+    },
+    messageWrapper: {
+        display: "flex",
+        flexDirection: "row",
+        padding: "0.75rem",
+        borderTop: "2px solid #d5d5d5",
+    },
+    avatar: {
+        width: "3rem",
+        height: "3rem",
+        border: "2px solid #2b353e",
+    },
+    pseudo: {
+        marginTop: "0",
+        marginLeft: "0.5rem",
+        fontWeight: 700,
+    },
+    comment: {
+        marginTop: "1.5rem",
+        transform: "translate(74px, -58px)",
+    },
 }));
+
 
 export default function Home() {
     const classes = useStyles();
+    const token = localStorage.token;
+    const [postReady, setPostReady] = useState(true);
+    const [timeline, setTimeline] = useState([]);
+    const [userData, setUserData] = useState([]);
+    const [comment, setComment] = useState("");
+    const config = {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    }
+
+    useEffect(() => {
+        getUserData();
+    }, [])
+
+    useEffect(() => {
+        if (postReady) {
+            axios.get(`http://localhost:5000/cinefiles-12/europe-west1/api/timeline`, config)
+                .then(function (res) {
+                    setTimeline(res.data)
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+        return setPostReady(false)
+    }, [postReady, timeline])
+
+    function getUserData() {
+        axios.get(`http://localhost:5000/cinefiles-12/europe-west1/api/user`, config)
+            .then(function (res) {
+                setUserData(res.data);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
+    function postComment() {
+        const body = {
+            comment: comment,
+            pseudo: userData.pseudo.length > 0 ? userData.pseudo : userData.email,
+            profilePic: userData.profilePic.length > 0 ? userData.profilePic : userData.email,
+            createAt: new Date(),
+        };
+
+        axios
+            .post(`http://localhost:5000/cinefiles-12/europe-west1/api/timeline`, body, config)
+            .then(function (res) {
+                setComment("");
+                setPostReady(true)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
 
     return (
-        <Grid container>
-            <Grid item xs={9} className={classes.borderRight}>
-                <Grid item xs={12}>
-                    <TextField
-                    className={classes.textFieldBox}
-                    label="Exprimez vous !"
-                    multiline
-                    rows={6}
-                />
+        <Grid container >
+            <Grid item xs={8} className={classes.borderRight}>
+                <Grid container>
+                    <Grid item xs={12}>
+                        <TextField
+                        className={classes.textFieldBox}
+                        label="Exprimez vous !"
+                        multiline
+                        rows={6}
+                        value={comment}
+                        onChange={(event) => {
+                            setComment(event.target.value)
+                        }}
+                    />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Button className={classes.textFieldButton} onClick={() => postComment()} disabled={comment.length === 0}>Partager</Button>
+                    </Grid>
+                    <Grid item xs={12}>
+                        {
+                            timeline.map((message) =>
+                                <Grid item xs={12}>
+                                    <div className={classes.messageWrapper}>
+                                        <Avatar alt="message" src={message.userPic ? message.userPic : ""} className={classes.avatar}/>
+                                        <p className={classes.pseudo}>{message.pseudo}</p>
+                                    </div>
+                                    <p className={classes.comment}>{message.comment}</p>
+                                </Grid>
+                            )
+                        }
+                    </Grid>
                 </Grid>
-                <Button className={classes.textFieldButton}>Partager</Button>
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={4} className={classes.trend}>
                 <Trend />
             </Grid>
         </Grid>

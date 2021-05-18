@@ -115,8 +115,19 @@ export default function Explorer() {
     }
 
     function createSession() {
+        const token = ""
+        axios.get(`https://api.themoviedb.org/3/authentication/guest_session/new?&api_key=${myApiKey}`)
+            .then(res => {
+                return res.status
+            })
+
+        axios.get(`https://api.themoviedb.org/3/authentication/token/new?&api_key=${myApiKey}`)
+            .then(res => {
+                return res.status
+            })
+
         const body = {
-            "request_token": "6bc047b88f669d1fb86574f06381005d93d3517a"
+            "request_token": token
         }
 
         axios.post(`https://api.themoviedb.org/3/authentication/session/new?&api_key=${myApiKey}`, body)

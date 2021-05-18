@@ -209,7 +209,7 @@ export default function Profil() {
                     <IconButton color="primary" aria-label="upload picture" component="span">
                         <PhotoCamera className={classes.iconEditBackgroundPic} />
                     </IconButton>
-                    <Avatar alt="Tyron" src="/test" className={classes.avatar}/>
+                    <Avatar alt="Tyron" src="/test" className={classes.avatar} />
                     <IconButton color="primary" aria-label="upload picture" component="span">
                         <PhotoCamera className={classes.iconEditProfilePic} />
                     </IconButton>

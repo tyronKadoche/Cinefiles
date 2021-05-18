@@ -73,6 +73,12 @@ const useStyles = makeStyles((theme) => ({
         width: "32rem",
         backgroundImage: "cover"
     },
+    trend: {
+        display: "flex",
+        flexDirection: "column",
+        marginLeft: "auto",
+        marginRight: "auto",
+    },
 }))
 
 export default function Trend() {
@@ -103,7 +109,7 @@ export default function Trend() {
     }
 
     return (
-        <div>
+        <div className={classes.trend}>
             <Modal open={openModal} onClose={() => handleModal({})}>
                 {infoModal(actualMovie, classes)}
             </Modal>
