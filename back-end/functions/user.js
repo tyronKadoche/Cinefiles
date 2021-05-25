@@ -82,3 +82,30 @@ exports.getMyWatchlist = (req, res) => {
     })
     .catch(err => console.error(err))
 }
+
+exports.deleteWatchlist = (req, res) => {
+  const userId = req.user.userId;
+  const movieId = req.params.movieId;
+  let movieTable;
+  console.log('movieId = ', typeof +movieId)
+  db.collection(`/user/${userId}/watchlist`)
+    .where("movieId", "==", +movieId)
+    .get()
+    .then((doc) => {
+      // console.log(doc[0])
+      doc.forEach((movie) => {
+        console.log("movie = ", movie.id);
+        movieTable = movie.id;
+      });
+      return db
+        .doc(`/user/${userId}/watchlist/${movieTable}`)
+        .delete()
+    })
+    .then((doc) => {
+          return res.status(200).json({message: "success"});
+        })
+  .catch(err => {
+    console.log('error = ', err)
+    return res.status(500).json({message: err})
+  })
+}

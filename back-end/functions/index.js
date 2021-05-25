@@ -4,7 +4,7 @@ const cors = require("cors");
 const app = express();
 
 const { validateFirebaseIdToken } = require("./verifyIdToken")
-const { getUserData, putUserData, postMyWatchlist, getMyWatchlist } = require("./user");
+const { getUserData, putUserData, postMyWatchlist, getMyWatchlist, deleteWatchlist } = require("./user");
 const config = require("./config");
 const {admin, db, fb} = require("./admin");
 const { getTimeline, postTimeline } = require("./timeline");
@@ -82,7 +82,7 @@ app.post("/user", validateFirebaseIdToken, putUserData);
 /* WATCHLIST */
 app.post("/user/watchlist", validateFirebaseIdToken, postMyWatchlist);
 app.get("/user/watchlist", validateFirebaseIdToken, getMyWatchlist);
-// to do delete
+app.delete("/user/watchlist/:movieId", validateFirebaseIdToken, deleteWatchlist)
 
 /* TIMELINE */
 app.get("/timeline", validateFirebaseIdToken, getTimeline);
