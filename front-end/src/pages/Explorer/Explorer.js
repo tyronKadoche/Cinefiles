@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid, Card, CardHeader, CardMedia, CardActions, CardActionArea, CircularProgress, IconButton, Button, Modal } from '@material-ui/core';
@@ -92,18 +92,16 @@ export default function Explorer() {
     const classes = useStyles();
     const myApiKey = '9f2b4da1f683c576d9af80887567e2c7'; //9f2b4da1f683c576d9af80887567e2c7
     const [moviesTable , setMoviesTable] = useState([]);
+    const [watchlist, setWatchlist] = useState([]);
     const [actualMovie, setActualMovie] = useState({});
     const [openModal, setopenModal] = useState(false);
     const [openRateModal, setOpenRateModal] = useState(false);
+    const [refresh, setRefresh] = useState(true);
     const [page, setPage] = useState(1);
     const token = localStorage.token;
 
-    useEffect(() => {
-        getMoviesList();
-        createSession();
-    }, []);
 
-    function getMoviesList() {
+    function getMoviesList()  {
         let newMovieTable = [];
 
         axios.get(`https://api.themoviedb.org/3/movie/popular?page=${page}&api_key=${myApiKey}`)
@@ -114,26 +112,46 @@ export default function Explorer() {
         })
     }
 
+    function getMyWatchlist() {
+        const token = localStorage.token;
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        };
+        axios
+        .get(
+            `http://localhost:5000/cinefiles-12/europe-west1/api/user/watchlist`,
+            config
+            )
+            .then(function (res) {
+                setWatchlist(res.data)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    };
+
     function createSession() {
         const token = ""
         axios.get(`https://api.themoviedb.org/3/authentication/guest_session/new?&api_key=${myApiKey}`)
-            .then(res => {
-                return res.status
-            })
+        .then(res => {
+            return res.status
+        })
 
         axios.get(`https://api.themoviedb.org/3/authentication/token/new?&api_key=${myApiKey}`)
-            .then(res => {
-                return res.status
-            })
+        .then(res => {
+            return res.status
+        })
 
         const body = {
             "request_token": token
         }
 
         axios.post(`https://api.themoviedb.org/3/authentication/session/new?&api_key=${myApiKey}`, body)
-            .then(res => {
-                return res.status
-            })
+        .then(res => {
+            return res.status
+        })
     }
 
     function rateMovie(movie, rate) {
@@ -142,11 +160,11 @@ export default function Explorer() {
             "value": rate
         }
         axios.post(`https://api.themoviedb.org/3/movie/${movie.id}/rating?&api_key=${myApiKey}`, body)
-            .then(res => {
-                if (res.status === 200) {
-                    getMoviesList();
-                }
-            })
+        .then(res => {
+            if (res.status === 200) {
+                getMoviesList();
+            }
+        })
     }
 
     function handleModal(movie) {
@@ -159,20 +177,47 @@ export default function Explorer() {
         setOpenRateModal(!openRateModal)
     }
 
-    function addToWatchlist(movieId) {
+    function postNotification(movie) {
         const config = {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         }
         const body = {
-            movieId: movieId
+            notificationStatus: `Vous avez ajouté ${movie.title} à votre watchlist`,
+            notificationDate: new Date(),
         }
-        axios.post(`http://localhost:5000/cinefiles-12/europe-west1/api/user/watchlist`, body, config)
+        axios.post(`http://localhost:5000/cinefiles-12/europe-west1/api/user/notification`, body, config)
             .then(res => {
-                console.log('res.data from add to watchlist = ', res.data)
+                console.log('notification = ', res.data)
             })
     }
+
+    function addToWatchlist(movie) {
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }
+        const body = {
+            movieId: movie.id
+        }
+        axios.post(`http://localhost:5000/cinefiles-12/europe-west1/api/user/watchlist`, body, config)
+        .then(res => {
+            postNotification(movie)
+            console.log('res.data from add to watchlist = ', res.data)
+            setRefresh(true);
+        })
+    }
+
+    useEffect(() => {
+        if (refresh) {
+            getMoviesList();
+            getMyWatchlist();
+            createSession();
+        }
+        return setRefresh(false)
+    }, [refresh, moviesTable]);
 
     return (
         <div>
@@ -194,7 +239,7 @@ export default function Explorer() {
            {
            moviesTable ?
             <Grid container className={classes.margin1}>
-               { moviesTable.map((movie) => (
+               { moviesTable.map((movie) => !watchlist.find(movieId => movieId === movie.id) ? (
                    <Grid className={classes.wrapper} item xs={12} md={6} lg={4} spacing={2}>
                        <Card className={classes.card}>
                             <CardHeader className={classes.title} title={movie.title}/>
@@ -213,13 +258,13 @@ export default function Explorer() {
                                <IconButton className={classes.actionIcon} aria-label="rated">
                                    <StarIcon onClick={() => handleRateModal(movie)} />
                                </IconButton>
-                               <IconButton className={classes.actionIcon} aria-label="add to watchlist" onClick={() => addToWatchlist(movie.id)}>
+                               <IconButton className={classes.actionIcon} aria-label="add to watchlist" onClick={() => addToWatchlist(movie)}>
                                    <AddToQueueIcon />
                                </IconButton>
                             </CardActions>
                         </Card>
                     </Grid>
-                    )
+                    ) : ""
                 )}
                 <Grid item xs={12} className={classes.loadMoreButtonWrapper}>
                     <Button className={classes.loadMoreButton} onClick={() => getMoviesList()}>Plus de films / séries</Button>

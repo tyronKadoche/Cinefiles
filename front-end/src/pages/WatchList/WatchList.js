@@ -85,22 +85,21 @@ export default function WatchList() {
   const [watchlist, setWatchlist] = useState([]);
   const [refreshTab, setRefreshTab] = useState(true);
 
-  const getMovieFromTMDB = useCallback((movieId) => {
-        const myApiKey = "c0312d6e4f0a54c83d85d753e88182ce"; //9f2b4da1f683c576d9af80887567e2c7
-        if (refreshTab) {
-        axios
-          .get(
-            `https://api.themoviedb.org/3/movie/${movieId}?&api_key=${myApiKey}`
-          )
-          .then((res) => {
-            setWatchlist((oldParam) => [...oldParam, res.data]);
-          });
-        }
-            return setRefreshTab(false);
-      }, [refreshTab, setWatchlist])
+  function getMovieFromTMDB(movieId) {
+    const myApiKey = "c0312d6e4f0a54c83d85d753e88182ce"; //9f2b4da1f683c576d9af80887567e2c7
+    if (refreshTab) {
+    axios
+      .get(
+        `https://api.themoviedb.org/3/movie/${movieId}?&api_key=${myApiKey}`
+      )
+      .then((res) => {
+        setWatchlist((oldParam) => [...oldParam, res.data]);
+      });
+    }
+      return setRefreshTab(false);
+  }
 
-  const getMyWatchlist = useCallback(() => {
-    const token = localStorage.token;
+  function getMyWatchlist() {
     const config = {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -117,83 +116,102 @@ export default function WatchList() {
       .catch(function (error) {
         console.log(error);
       });
-  }, [getMovieFromTMDB]);
+  };
 
-
-      function deleteWatchlist(movieId) {
-        axios
-          .delete(
-            `http://localhost:5000/cinefiles-12/europe-west1/api/user/watchlist/${movieId}`,
-            config
-          )
-          .then(function (res) {
-            setRefreshTab(true);
-            console.log("Deleted element", res.data);
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+  function postNotification(movie) {
+    const config = {
+      headers: {
+        'Authorization': `Bearer ${token}`
       }
+    }
+    const body = {
+      notificationStatus: `Vous avez supprimé ${movie.title} de votre watchlist`,
+      notificationDate: new Date(),
+    }
+    axios.post(`http://localhost:5000/cinefiles-12/europe-west1/api/user/notification`, body, config)
+      .then(res => {
+        console.log('notification = ', res.data)
+      })
+  }
 
-      useEffect(() => {
-        getMyWatchlist();
-        return setRefreshTab(false)
-      }, [getMyWatchlist]);
+  function deleteWatchlist(movie) {
+    axios
+      .delete(
+        `http://localhost:5000/cinefiles-12/europe-west1/api/user/watchlist/${movie.id}`,
+        config
+      )
+      .then(function (res) {
+        setRefreshTab(true);
+        postNotification(movie)
+        console.log("Deleted element", res.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
 
-      return (
+  useEffect(() => {
+    if (refreshTab) {
+      getMyWatchlist();
+      setWatchlist([])
+    }
+    return setRefreshTab(false)
+  }, [refreshTab, watchlist]);
+
+  return (
+    <Grid container>
+      <Grid item xs={12} className={classes.titleIconWrapper}>
+        <ListItemIcon>
+          <SubscriptionsIcon className={classes.titleIcon} />
+        </ListItemIcon>
+        <h1>Watchlist</h1>
+      </Grid>
+      <Grid item xs={12} className={classes.margin1}>
         <Grid container>
-          <Grid item xs={12} className={classes.titleIconWrapper}>
-            <ListItemIcon>
-              <SubscriptionsIcon className={classes.titleIcon} />
-            </ListItemIcon>
-            <h1>Watchlist</h1>
-          </Grid>
-          <Grid item xs={12} className={classes.margin1}>
-            <Grid container>
-              {watchlist &&
-                watchlist.map((movie) => (
-                  <Grid
-                    className={classes.wrapper}
-                    item
-                    xs={12}
-                    md={6}
-                    lg={4}
-                    spacing={2}
-                  >
-                    <Card className={classes.card}>
-                      <CardHeader
-                        className={classes.title}
-                        title={movie.title}
+          {
+          watchlist && watchlist.map((movie) => (
+              <Grid
+                className={classes.wrapper}
+                item
+                xs={12}
+                md={6}
+                lg={4}
+                spacing={2}
+              >
+                <Card className={classes.card}>
+                  <CardHeader
+                    className={classes.title}
+                    title={movie.title}
+                  />
+                  <CardActionArea>
+                    <CardMedia
+                      className={classes.media}
+                      image={`https://image.tmdb.org/t/p/w500${movie.backdrop_path}`}
+                      onClick={null}
+                    />
+                  </CardActionArea>
+                  <CardActions disableSpacing>
+                    <h3>note: {movie.vote_average}</h3>
+                    <IconButton
+                      className={classes.actionIcon}
+                      aria-label="rated"
+                    >
+                      <StarIcon />
+                    </IconButton>
+                    <IconButton
+                      className={classes.actionIcon}
+                      aria-label="add to watchlist"
+                    >
+                      <RemoveFromQueueIcon
+                        onClick={() => deleteWatchlist(movie)}
                       />
-                      <CardActionArea>
-                        <CardMedia
-                          className={classes.media}
-                          image={`https://image.tmdb.org/t/p/w500${movie.backdrop_path}`}
-                          onClick={null}
-                        />
-                      </CardActionArea>
-                      <CardActions disableSpacing>
-                        <h3>note: {movie.vote_average}</h3>
-                        <IconButton
-                          className={classes.actionIcon}
-                          aria-label="rated"
-                        >
-                          <StarIcon />
-                        </IconButton>
-                        <IconButton
-                          className={classes.actionIcon}
-                          aria-label="add to watchlist"
-                        >
-                          <RemoveFromQueueIcon
-                            onClick={() => deleteWatchlist(movie.id)}
-                          />
-                        </IconButton>
-                      </CardActions>
-                    </Card>
-                  </Grid>
-                ))}
-            </Grid>
-          </Grid>
+                    </IconButton>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
         </Grid>
-      );
+      </Grid>
+    </Grid>
+  );
 }

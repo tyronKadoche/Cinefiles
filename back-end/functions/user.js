@@ -45,17 +45,6 @@ exports.putUserData = (req, res) => {
     return res.status(200).json(doc.data());
   })
   .catch(err => console.error(err))
-
-    // admin
-    //   .auth()
-    //   .updateUser(userId, {password: password})
-    //     .then(() => {
-    //        res.status(200).json({success: true})
-    //     })
-    //     .catch(function (err) {
-    //       res.status(500).json(err);
-    //     });
-
 }
 
 exports.postMyWatchlist = (req, res) => {
@@ -87,7 +76,6 @@ exports.deleteWatchlist = (req, res) => {
   const userId = req.user.userId;
   const movieId = req.params.movieId;
   let movieTable;
-  console.log('movieId = ', typeof +movieId)
   db.collection(`/user/${userId}/watchlist`)
     .where("movieId", "==", +movieId)
     .get()
@@ -108,4 +96,61 @@ exports.deleteWatchlist = (req, res) => {
     console.log('error = ', err)
     return res.status(500).json({message: err})
   })
+}
+
+exports.postNotification = (req, res) => {
+  const userId = req.user.userId;
+  const notificationStatus = req.body.notificationStatus;
+  const notificationDate = req.body.notificationDate;
+
+  db.collection(`/user/${userId}/notification`).doc().set({ notificationStatus, notificationDate })
+    .then((doc) => {
+      return res.status(200).json(doc.data());
+    })
+    .catch(err => console.error(err))
+}
+
+exports.getNotification = (req, res) => {
+  console.log("cmoiwesh")
+  let userId = req.user.userId;
+  admin
+    .firestore()
+    .doc(`/user/${userId}/notification`)
+    .get()
+    .then((doc) => {
+      return res.status(200).json(doc.data());
+    })
+    .catch(function (error) {
+      return res.status(400).json({
+        message: "request failed !" + error.message,
+        status: error.code,
+      });
+    })
+}
+
+exports.deleteNotification = (req, res) => {
+  // const userId = req.user.userId;
+  // const movieId = req.params.movieId;
+  // let movieTable;
+  // console.log('movieId = ', typeof +movieId)
+  // db.collection(`/user/${userId}/watchlist`)
+  //   .where("movieId", "==", +movieId)
+  //   .get()
+  //   .then((doc) => {
+  //     // console.log(doc[0])
+  //     doc.forEach((movie) => {
+  //       console.log("movie = ", movie.id);
+  //       movieTable = movie.id;
+  //     });
+  //     return db
+  //       .doc(`/user/${userId}/watchlist/${movieTable}`)
+  //       .delete()
+  //   })
+  //   .then((doc) => {
+  //     return res.status(200).json({ message: "success" });
+  //   })
+  //   .catch(err => {
+  //     console.log('error = ', err)
+  //     return res.status(500).json({ message: err })
+  //   })
 }

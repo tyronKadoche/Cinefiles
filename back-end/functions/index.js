@@ -4,14 +4,12 @@ const cors = require("cors");
 const app = express();
 
 const { validateFirebaseIdToken } = require("./verifyIdToken")
-const { getUserData, putUserData, postMyWatchlist, getMyWatchlist, deleteWatchlist } = require("./user");
+const { getUserData, putUserData, postMyWatchlist, getMyWatchlist, deleteWatchlist, postNotification, getNotification, deleteNotification } = require("./user");
 const config = require("./config");
 const {admin, db, fb} = require("./admin");
 const { getTimeline, postTimeline } = require("./timeline");
 
 app.use(cors({origin: true}));
-
-
 
 app.post("/register",
   (req, res) => {
@@ -83,6 +81,11 @@ app.post("/user", validateFirebaseIdToken, putUserData);
 app.post("/user/watchlist", validateFirebaseIdToken, postMyWatchlist);
 app.get("/user/watchlist", validateFirebaseIdToken, getMyWatchlist);
 app.delete("/user/watchlist/:movieId", validateFirebaseIdToken, deleteWatchlist)
+
+/* NOTIFICATION */
+app.post("/user/notification", validateFirebaseIdToken, postNotification);
+app.get("/user/notification", validateFirebaseIdToken, getNotification);
+app.delete("/user/notification/:notification", validateFirebaseIdToken, deleteNotification)
 
 /* TIMELINE */
 app.get("/timeline", validateFirebaseIdToken, getTimeline);
