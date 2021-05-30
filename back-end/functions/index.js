@@ -8,6 +8,7 @@ const { getUserData, putUserData, postMyWatchlist, getMyWatchlist, deleteWatchli
 const config = require("./config");
 const {admin, db, fb} = require("./admin");
 const { getTimeline, postTimeline } = require("./timeline");
+const { getChats, postChat, postMessages, getChat } = require("./chat");
 
 app.use(cors({origin: true}));
 
@@ -90,5 +91,13 @@ app.delete("/user/notification/:notification", validateFirebaseIdToken, deleteNo
 /* TIMELINE */
 app.get("/timeline", validateFirebaseIdToken, getTimeline);
 app.post("/timeline", validateFirebaseIdToken, postTimeline);
+
+/* MESSAGES */
+app.get("/user/chats", validateFirebaseIdToken, getChats)
+app.post("/user/chats", validateFirebaseIdToken, postChat)
+// do in get
+app.post("/chats", validateFirebaseIdToken, getChat)
+
+app.post("/messages", validateFirebaseIdToken, postMessages)
 
 exports.api = functions.region("europe-west1").https.onRequest(app);

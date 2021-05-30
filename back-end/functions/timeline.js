@@ -20,12 +20,13 @@ exports.getTimeline = (req, res) => {
 }
 
 exports.postTimeline = (req, res) => {
+    let userId = req.user.userId;
     const comment = req.body.comment;
     const pseudo = req.body.pseudo;
     const profilePic = req.body.profilePic;
     const createAt = req.body.createAt;
 
-    db.collection(`/timeline`).doc().set({ comment, pseudo, profilePic, createAt })
+    db.collection(`/timeline`).doc().set({ comment, pseudo, profilePic, createAt, userId })
         .then((doc) => {
             return res.status(200).json({succes: "success !"});
         })

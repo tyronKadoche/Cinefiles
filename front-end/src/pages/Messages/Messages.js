@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { makeStyles, Grid, TextField, Avatar, Button } from '@material-ui/core';
 
@@ -30,46 +30,59 @@ export default function Messages() {
             'Authorization': `Bearer ${token}`
         }
     }
-
-    const [conversation, setConversation] = useState([]);
+    const chatId = window.location.search.slice(8);
+    console.log(chatId)
+    const [conversation, setConversation] = useState();
     const [actualConversation, setActualConversation] = useState([]);
     const [comment, setComment] = useState("");
 
-    function getConversation() {
-        axios.get(`http://localhost:5000/cinefiles-12/europe-west1/api/user/conversation`, config)
-            .then(function (res) {
-                // todo
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    }
-
+    useEffect(() => {
+        getConversation();
+    }, [])
+    console.log(chatId)
     function postMessage() {
-        axios.post(`http://localhost:5000/cinefiles-12/europe-west1/api/user/conversation`, config)
+        axios.post(`http://localhost:5000/cinefiles-12/europe-west1/api/messages`, {
+            text: comment,
+            userId: conversation.destUserId,
+            chatId
+        },
+        config)
             .then(function (res) {
-                // todo
+                setConversation(res.data)
             })
             .catch(function (error) {
                 console.log(error);
             });
     }
 
+    function getConversation() {
+        axios.post(`http://localhost:5000/cinefiles-12/europe-west1/api/chats`, {
+            chatId,
+        }, config)
+            .then(function (res) {
+                setConversation(res.data)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
+
+    console.log("conversation", conversation)
     return (
         <Grid container>
             <Grid item xs={3}>
-                {
+                {/* {
                     conversation.map((conversation) => {
-                        // todo
                     })
-                }
+                } */}
             </Grid>
             <Grid item xs={9}>
                 {
-                    actualConversation.map((messages) =>
+                    conversation?.messages?.map((message) =>
                         <>
-                            <Avatar alt="message" src={messages.avatar} className={classes.avatar} />
-                            <p>{messages.content}</p>
+                            {/* <Avatar alt="message" src={messages.avatar} className={classes.avatar} /> */}
+                            <p>{message}</p>
                         </>
                     )
                 }

@@ -10,7 +10,7 @@ exports.getUserData = (req, res) => {
     .doc(`/user/${userId}`)
     .get()
       .then((doc) => {
-        return res.status(200).json(doc.data());
+        return res.status(200).json({...doc.data(), userId });
       })
       .catch(function (error) {
         return res.status(400).json({
@@ -32,6 +32,7 @@ exports.putUserData = (req, res) => {
 
   db.doc(`/user/${userId}`).set(
     {
+      userId,
       pseudo,
       backgroundPic,
       birth,

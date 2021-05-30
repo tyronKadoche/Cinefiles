@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, makeStyles, Button, Grid, Avatar } from '@material-ui/core';
+import { useHistory } from "react-router-dom";
+import { TextField, makeStyles, Button, Grid, Avatar, Menu, MenuItem } from '@material-ui/core';
 import Trend from '../../components/Trend'
 import axios from 'axios';
 import "./home.css"
@@ -44,12 +45,41 @@ const useStyles = makeStyles((theme) => ({
 
 
 export default function Home() {
+    let history = useHistory();
     const classes = useStyles();
     const token = localStorage.token;
     const [postReady, setPostReady] = useState(true);
     const [timeline, setTimeline] = useState([]);
     const [userData, setUserData] = useState([]);
     const [comment, setComment] = useState("");
+    const [selectUser, setSelectUSer] = useState(null);
+    const [openMenu, setOpenMenu] = useState(false);
+
+    const handleClick = (user) => {
+        setSelectUSer(user);
+        postTchat(user);
+    };
+
+    function postTchat(destUserId) {
+        console.log('destUserId = ', destUserId)
+        axios.post(`http://localhost:5000/cinefiles-12/europe-west1/api/user/chats`, {
+            userId: destUserId
+        }, config)
+            .then(function (res) {
+                if (res.status === 200) {
+                    history.push(`/message?chatId=${res.data.chatId}`)
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
+    const handleClose = () => {
+        setOpenMenu(false)
+        setSelectUSer(null);
+    };
+
     const config = {
         headers: {
             'Authorization': `Bearer ${token}`
@@ -89,6 +119,7 @@ export default function Home() {
             pseudo: userData.pseudo.length > 0 ? userData.pseudo : userData.email,
             profilePic: userData.profilePic.length > 0 ? userData.profilePic : userData.email,
             createAt: new Date(),
+            userId: userData.userId
         };
 
         axios
@@ -125,8 +156,21 @@ export default function Home() {
                         {
                             timeline.map((message) =>
                                 <Grid item xs={12}>
+                                    {console.log('message = ', message)}
                                     <div className={classes.messageWrapper}>
-                                        <Avatar alt="message" src={message.userPic ? message.userPic : ""} className={classes.avatar}/>
+                                        <Avatar alt="message" src={message.userPic ? message.userPic : ""} className={classes.avatar} onClick={() => postTchat(message.userId)}>
+                                            {/* <Menu
+                                                id="simple-menu"
+                                                keepMounted
+                                                open={openMenu}
+                                                onClose={handleClose}
+                                            >
+                                                <MenuItem onClick={() => {console.log(message);postTchat(message.userId)}}>
+                                                    Envoyer un message privé
+                                                </MenuItem>
+                                            </Menu> */}
+                                        </Avatar>
+
                                         <p className={classes.pseudo}>{message.pseudo}</p>
                                     </div>
                                     <p className={classes.comment}>{message.comment}</p>

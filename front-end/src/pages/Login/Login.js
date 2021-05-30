@@ -44,7 +44,6 @@ export default function Login() {
             email: email,
             password: password,
         }
-        console.log('body = ', body);
         axios.post('http://localhost:5000/cinefiles-12/europe-west1/api/login', body)
             .then(function (response) {
                 localStorage.setItem('token', response.data.token );
