@@ -98,6 +98,7 @@ app.post("/user/chats", validateFirebaseIdToken, postChat)
 // do in get
 app.post("/chats", validateFirebaseIdToken, getChat)
 
+
 app.post("/messages", validateFirebaseIdToken, postMessages)
 
 exports.api = functions.region("europe-west1").https.onRequest(app);

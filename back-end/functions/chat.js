@@ -14,48 +14,55 @@ exports.postMessages = async (req, res) => {
     await db.collection(`/user/${userId}/chats`).doc(chatId).update({
         messages: admin.firestore.FieldValue.arrayUnion(message)
     })
+    .catch(err => console.error(err))
     await db.collection(`/user/${destUserId}/chats`).doc(chatId).update({
         messages: admin.firestore.FieldValue.arrayUnion(message)
     })
-    return res.status(200);
+    .then(() => {
+        return res.status(200);
+    })
+    .catch(err => console.error(err))
 }
 
-// exports.getMessages = (req, res) => {
-//     const userId = req.user.userId;
-//     let movieTable = []
-
-//     db.collection(`/user/${userId}/chats`).get()
-//         .then((doc) => {
-//             doc.forEach((movie) => {
-//                 movieTable.push(movie.data().movieId)
-//             })
-//             return res.status(200).json(movieTable);
-//         })
-//         .catch(err => console.error(err))
-// }
-
+// cette fonction get tt les chats
 exports.getChats = (req, res) => {
     const userId = req.user.userId;
     let chats = []
     db.collection(`/user/${userId}/chats`).get()
         .then((doc) => {
             doc.forEach((chat) => {
-                chats.push(chat.data())
+                chats.push({
+                    destName: chat.data().destName,
+                    destPic: chat.data().destPic,
+                    destUserId: chat.data().destUserId,
+                    messages: chat.data().messages,
+                    docId: chat.id,
+                })
             })
             return res.status(200).json(chats);
         })
         .catch(err => console.error(err))
 }
 
+// cette fonction crée une room
 exports.postChat = async (req, res) => {
     const userId = req.user.userId;
-    const destUserId = req.body.userId;
+    const destUserId = req.body.destUserId;
+    const destName = req.body.destName;
+    const destPic = req.body.destPic;
+    const name = req.body.name;
+    const profilePic = req.body.profilePic;
+
     const doc = await db.collection(`/user/${userId}/chats`).add({
-        destUserId,
+        destUserId: destUserId,
+        destPic: destPic,
+        destName: destName,
         messages: []
     })
-    await db.collection(`/user/${destUserId}/chats`).doc(doc.id).set({
+    await db.collection(`/user/${destUserId}/chats`).add({
         destUserId: userId,
+        destPic: profilePic,
+        destName: name,
         messages: []
     })
     return res.status(200).json({
@@ -63,6 +70,7 @@ exports.postChat = async (req, res) => {
     });
 }
 
+// cette fonction je sais pas a quoi elle sert mais vsy
 exports.getChat = async (req, res) => {
     const userId = req.user.userId;
     const chatId = req.body.chatId;

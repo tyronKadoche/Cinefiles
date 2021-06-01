@@ -101,7 +101,6 @@ export default function Trend() {
         axios.get(`https://api.themoviedb.org/3/movie/popular?page=1&api_key=${myApiKey}`)
             .then(res => {
                 setTrendTable(res.data.results);
-                console.log('trendTable = ', trendTable)
             })
             .catch((error) => {
                 console.log('error = ', console.error)

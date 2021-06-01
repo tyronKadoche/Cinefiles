@@ -60,14 +60,19 @@ export default function Home() {
         postTchat(user);
     };
 
-    function postTchat(destUserId) {
-        console.log('destUserId = ', destUserId)
-        axios.post(`http://localhost:5000/cinefiles-12/europe-west1/api/user/chats`, {
-            userId: destUserId
-        }, config)
+    function postTchat(message) {
+        console.log('message = ', message)
+        const body = {
+            destName: message.pseudo,
+            destPic: message.userPic ? message.userPic : "",
+            destUserId: message.userId,
+            name: userData.pseudo,
+            profilePic: userData.profilePic
+        }
+        axios.post(`http://localhost:5000/cinefiles-12/europe-west1/api/user/chats`, body, config)
             .then(function (res) {
                 if (res.status === 200) {
-                    history.push(`/message?chatId=${res.data.chatId}`)
+                    history.push(`/chats?chatId=${res.data.chatId}`)
                 }
             })
             .catch(function (error) {
@@ -156,9 +161,8 @@ export default function Home() {
                         {
                             timeline.map((message) =>
                                 <Grid item xs={12}>
-                                    {console.log('message = ', message)}
                                     <div className={classes.messageWrapper}>
-                                        <Avatar alt="message" src={message.userPic ? message.userPic : ""} className={classes.avatar} onClick={() => postTchat(message.userId)}>
+                                        <Avatar alt="message" src={message.userPic ? message.userPic : ""} className={classes.avatar} onClick={() => postTchat(message)}>
                                             {/* <Menu
                                                 id="simple-menu"
                                                 keepMounted

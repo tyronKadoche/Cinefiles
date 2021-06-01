@@ -4,7 +4,7 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import EmailIcon from '@material-ui/icons/Email';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 
-import { Home, Explorer, Notifications, Messages, Profil } from "../pages/index";
+import { Home, Explorer, Notifications, ChatSalon, Profil } from "../pages/index";
 
 const routes = [
     {
@@ -30,10 +30,10 @@ const routes = [
     },
     {
         id: 3,
-        name: "Message",
+        name: "Chats",
         icon: <EmailIcon />,
-        route: "/message",
-        component: <Messages />,
+        route: "/chats",
+        component: <ChatSalon />,
     },
     {
         id: 4,

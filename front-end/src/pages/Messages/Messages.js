@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function Messages() {
+export default function Messages({actualConversation}) {
     const classes = useStyles();
     const token = localStorage.token;
     const config = {
@@ -31,15 +31,14 @@ export default function Messages() {
         }
     }
     const chatId = window.location.search.slice(8);
-    console.log(chatId)
-    const [conversation, setConversation] = useState();
-    const [actualConversation, setActualConversation] = useState([]);
+    const [conversation, setConversation] = useState(actualConversation);
     const [comment, setComment] = useState("");
 
-    useEffect(() => {
-        getConversation();
-    }, [])
-    console.log(chatId)
+    console.log('actualConversation dans message = ', actualConversation)
+    // useEffect(() => {
+    //     getConversation();
+    // }, [])
+
     function postMessage() {
         axios.post(`http://localhost:5000/cinefiles-12/europe-west1/api/messages`, {
             text: comment,
@@ -55,49 +54,37 @@ export default function Messages() {
             });
     }
 
-    function getConversation() {
-        axios.post(`http://localhost:5000/cinefiles-12/europe-west1/api/chats`, {
-            chatId,
-        }, config)
-            .then(function (res) {
-                setConversation(res.data)
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    }
-
+    // function getConversation() {
+    //     axios.post(`http://localhost:5000/cinefiles-12/europe-west1/api/chats`, {
+    //         chatId,
+    //     }, config)
+    //         .then(function (res) {
+    //             setConversation(res.data)
+    //         })
+    //         .catch(function (error) {
+    //             console.log(error);
+    //         });
+    // }
 
     console.log("conversation", conversation)
     return (
         <Grid container>
-            <Grid item xs={3}>
-                {/* {
-                    conversation.map((conversation) => {
-                    })
-                } */}
-            </Grid>
-            <Grid item xs={9}>
-                {
-                    conversation?.messages?.map((message) =>
-                        <>
-                            {/* <Avatar alt="message" src={messages.avatar} className={classes.avatar} /> */}
-                            <p>{message}</p>
-                        </>
-                    )
-                }
-                <TextField
-                    id="standard-basic"
-                    label="message..."
-                    className={classes.sendedMessage}
-                    type='text'
-                    value={comment}
-                    multiline
-                    rows={4}
-                    onChange={(event) => setComment(event.target.value)}
-                />
-                <Button className={classes.textFieldButton} onClick={() => postMessage()} disabled={comment.length === 0}>Partager</Button>
-            </Grid>
+            {
+                actualConversation?.map((message) =>
+                    <p>{message.text}</p>
+                )
+            }
+            <TextField
+                id="standard-basic"
+                label="message..."
+                className={classes.sendedMessage}
+                type='text'
+                value={comment}
+                multiline
+                rows={4}
+                onChange={(event) => setComment(event.target.value)}
+            />
+            <Button className={classes.textFieldButton} onClick={() => postMessage()} disabled={comment.length === 0}>Partager</Button>
         </Grid>
     )
 }
