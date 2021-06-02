@@ -12,6 +12,7 @@ const useStyles = makeStyles((theme) => ({
     titleIconWrapper: {
         flexDirection: "row",
         display: "flex",
+        marginLeft: "1rem"
     },
     titleIcon: {
         width: "3rem",
@@ -20,8 +21,7 @@ const useStyles = makeStyles((theme) => ({
         color: "#000",
     },
     margin1: {
-        marginTop: "1rem",
-        marginBottom: "1rem"
+        margin: "1rem",
     },
     card: {
         width: 345,

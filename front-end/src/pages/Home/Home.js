@@ -174,7 +174,6 @@ export default function Home() {
                                                 </MenuItem>
                                             </Menu> */}
                                         </Avatar>
-
                                         <p className={classes.pseudo}>{message.pseudo}</p>
                                     </div>
                                     <p className={classes.comment}>{message.comment}</p>

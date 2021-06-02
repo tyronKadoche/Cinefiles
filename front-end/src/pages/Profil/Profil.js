@@ -19,15 +19,14 @@ const useStyles = makeStyles((theme) => ({
         width: "8rem",
         height: "8rem",
         border: "2px solid #2b353e",
-        transform: "translate(20px, -75px)",
-        position: "absolute",
+        transform: "translate(20px, -50px)",
     },
     banner: {
         width: "100%",
         height: "12rem",
     },
     infos: {
-        marginTop: "3.5rem",
+        marginTop: "-4rem",
         marginLeft: "2rem",
     },
     description: {
@@ -43,9 +42,9 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: "rgb(255, 255, 255)",
         height: "auto",
         borderRadius: 8,
-        width: 300,
+        width: 400,
         display: "flex",
-        margin: "10rem auto",
+        margin: "8rem auto",
         textAlign: "center",
         flexDirection: "column",
         padding: "1rem",
@@ -73,7 +72,7 @@ const useStyles = makeStyles((theme) => ({
     },
     iconEditProfilePic: {
         color: "#2b353e",
-        transform: "translate(70px, 70px)",
+        // transform: "translate(70px, 70px)",
     },
     pseudoWrapper: {
         display: "flex",
@@ -95,7 +94,6 @@ export default function Profil() {
     const [description, setDescription] = useState("");
     const [profilePic, setProfilePic] = useState("");
     const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
     const config = {
         headers: {
             'Authorization': `Bearer ${token}`
@@ -106,6 +104,7 @@ export default function Profil() {
         axios.get(`http://localhost:5000/cinefiles-12/europe-west1/api/user`, config)
             .then(function (res) {
               setPseudo(res.data.pseudo);
+              setProfilePic(res.data.profilePic);
               setBackgroundPic(res.data.backgroundPic);
               setBirth(res.data.birth);
               setCountry(res.data.country);
@@ -140,15 +139,16 @@ export default function Profil() {
       axios
         .post(`http://localhost:5000/cinefiles-12/europe-west1/api/user`, body, config)
         .then(function (res) {
-          setPseudo(res.data.pseudo);
-          setBackgroundPic(res.data.backgroundPic);
-          setBirth(res.data.birth);
-          setCountry(res.data.country);
-          setDescription(res.data.description);
-          setPassword(res.data.password);
+            setPseudo(res.data.pseudo);
+            setProfilePic(res.data.profilePic);
+            setBackgroundPic(res.data.backgroundPic);
+            setBirth(res.data.birth);
+            setCountry(res.data.country);
+            setDescription(res.data.description);
+            setPassword(res.data.password);
         })
         .catch(function (error) {
-          console.log(error);
+            console.log(error);
         });
     }
 
@@ -160,22 +160,38 @@ export default function Profil() {
                     <FormControl className={classes.userInputWrapper}>
                         <TextField
                             id="standard-basic"
-                            label="pseudo"
+                            label="Pseudo"
                             className={classes.userInput}
                             type='text'
                             value={pseudo}
                             onChange={(event) => setPseudo(event.target.value)}
                         />
                         <TextField
+                            label="Profile picture"
+                            className={classes.userInput}
+                            type='file'
+                            accept="image/*"
+                            value={profilePic}
+                            onChange={(event) => setProfilePic(event.target.value)}
+                        />
+                        <TextField
+                            label="Background picture"
+                            className={classes.userInput}
+                            type='file'
+                            accept="image/*"
+                            value={backgroundPic}
+                            onChange={(event) => setBackgroundPic(event.target.value)}
+                        />
+                        <TextField
                             id="standard-basic"
-                            label="birth"
+                            label="Birth"
                             className={classes.userInput}
                             type='date'
                             value={birth}
                             onChange={(event) => setBirth(event.target.value)}
                         />
                         <TextField
-                            label="description"
+                            label="Description"
                             rows={4}
                             multiline
                             className={classes.userInput}
@@ -192,6 +208,14 @@ export default function Profil() {
                         />
                     </FormControl>
 
+                    {/* <IconButton color="primary" aria-label="upload picture" component="span">
+                        <PhotoCamera className={classes.iconEditBackgroundPic} />
+                    </IconButton>
+
+                    <input accept="image/*" className={classes.input} id="icon-button-file" type="file" />
+                    <IconButton color="primary" aria-label="upload picture" component="span">
+                        <PhotoCamera className={classes.iconEditProfilePic} />
+                    </IconButton> */}
                     <Button className={classes.formularValidationButton} onClick={() => {
                             handleModal();
                             putUserData();
@@ -202,33 +226,31 @@ export default function Profil() {
                 </div>
             </Modal>
             <Grid container>
-                <Grid item xs={12} className={classes.wrapper}>
+                <Grid item xs={12} lg={12} className={classes.wrapper} container>
+
                     <img alt="noImg" src={defaultBanner} className={classes.banner}/>
-                    <IconButton color="primary" aria-label="upload picture" component="span">
-                        <PhotoCamera className={classes.iconEditBackgroundPic} />
-                    </IconButton>
                     <Avatar alt="Tyron" src="/test" className={classes.avatar} />
-                    <IconButton color="primary" aria-label="upload picture" component="span">
-                        <PhotoCamera className={classes.iconEditProfilePic} />
-                    </IconButton>
-                    <div className={classes.infos}>
-                        <div className={classes.pseudoWrapper}>
+
+                    <Grid item xs={12} lg={12} className={classes.infos} container>
+                        <Grid item xs={12} lg={12} className={classes.pseudoWrapper} direction="row">
                             <h2>{pseudo}</h2>
                             <IconButton color="primary" onClick={() => handleModal()}>
                                 <EditIcon />
                             </IconButton>
-                        </div>
-                        <p className={classes.description}>{description}</p>
-                        <div className={classes.subInfo}>
-                            <CakeIcon />
-                            <p className={classes.textMargin}>né le:{birth}</p>
-                            <RoomIcon />
-                            <p className={classes.textMargin}>Pays:{country}</p>
-                        </div>
-                        <Grid container>
-                            <WatchList />
                         </Grid>
-                    </div>
+                        <Grid item xs={12} lg={12}>
+                            <p className={classes.description}>{description}</p>
+                            <div className={classes.subInfo}>
+                                <CakeIcon />
+                                <p className={classes.textMargin}>né le:{birth}</p>
+                                <RoomIcon />
+                                <p className={classes.textMargin}>Pays:{country}</p>
+                            </div>
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <Grid container >
+                    <WatchList />
                 </Grid>
             </Grid>
         </div>

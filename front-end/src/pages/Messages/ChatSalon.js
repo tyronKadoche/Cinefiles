@@ -5,10 +5,31 @@ import { makeStyles, Grid, TextField, Avatar, Button } from '@material-ui/core';
 import Messages from './Messages';
 
 const useStyles = makeStyles((theme) => ({
+    sidebar: {
+        height: "100vh",
+        borderRight: "1px solid #2b353e",
+        backgroundColor: "#cee4e6"
+    },
+    roomWrapper: {
+        display: "flex",
+        flexDirection: "row",
+        padding: "0.75rem",
+        borderRadius: "8px",
+        margin: "0.25rem",
+        "&:hover": {
+            backgroundColor: '#2b353e',
+            color: "#fff",
+        }
+    },
     avatar: {
         width: "3rem",
         height: "3rem",
         border: "2px solid #2b353e",
+    },
+    pseudo: {
+        marginTop: "0",
+        marginLeft: "0.5rem",
+        fontWeight: 700,
     },
     messages: {
 
@@ -61,22 +82,21 @@ export default function ChatSalon() {
 
     return (
         <Grid container>
-            <Grid item xs={3} lg={3}>
+            <Grid item xs={2} lg={2} className={classes.sidebar}>
                 {
                     conversation?.map((conversation, key) =>
-                        <div key={key} onClick={() => handleConversation(conversation)}>
+                        <div key={key} className={classes.roomWrapper} onClick={() => handleConversation(conversation)}>
                             <Avatar alt="message" src={conversation.destPic ? conversation.destPic : ""} className={classes.avatar}></Avatar>
-                            <p>{conversation.destName}</p>
+                            <p className={classes.pseudo}>{conversation.destName}</p>
                         </div>
                     )
                 }
             </Grid>
-            {
-                actualConversation &&
-                <Grid item xs={9} lg={9}>
-                    <Messages actualConversation={actualConversation} />
-                </Grid>
-            }
+            <Grid item xs={10} lg={10}>
+                {
+                    actualConversation && <Messages actualConversation={actualConversation} />
+                }
+            </Grid>
         </Grid>
     )
 }
