@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { makeStyles, Chip } from '@material-ui/core';
+import { makeStyles, Chip, Grid } from '@material-ui/core';
 import Trend from '../../components/Trend'
 import axios from 'axios';
 
@@ -14,6 +14,10 @@ const useStyles = makeStyles((theme) => ({
     notificationsChips: {
         color: "#cee4e6",
         backgroundColor: "#2b353e",
+        marginTop: "1rem",
+    },
+    notification: {
+        margin: "1rem",
     }
 }));
 
@@ -53,7 +57,7 @@ export default function Notifications() {
         console.log('notif = ', notif);
         axios
             .delete(
-                `http://localhost:5000/cinefiles-12/europe-west1/api/user/watchlist/${notif.notificationId}`,
+                `http://localhost:5000/cinefiles-12/europe-west1/api/user/notification/${notif.notificationDate}`,
                 config
             )
             .then(function (res) {
@@ -68,11 +72,15 @@ export default function Notifications() {
     return (
         <div className={classes.wrapper}>
             <h1 className={classes.title}>Notifications</h1>
-            {
-                notifications.map((notif) =>
-                    <Chip label={notif.notificationStatus} onDelete={() => deleteNotification(notif)} className={classes.notificationsChips} />
-                )
-            }
+            <Grid container direction="column" justify="space-between">
+                {
+                    notifications.map((notif) =>
+                        <Grid item xs={12} lg={12} classes={classes.notification}>
+                            <Chip label={notif.notificationStatus} onDelete={() => deleteNotification(notif)} className={classes.notificationsChips} />
+                        </Grid>
+                    )
+                }
+            </Grid>
         </div>
     )
 }

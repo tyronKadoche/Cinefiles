@@ -52,20 +52,14 @@ export default function Home() {
     const [timeline, setTimeline] = useState([]);
     const [userData, setUserData] = useState([]);
     const [comment, setComment] = useState("");
-    const [selectUser, setSelectUSer] = useState(null);
     const [openMenu, setOpenMenu] = useState(false);
+    const [actuallMessage, setActuallMessage] = useState(false);
 
-    const handleClick = (user) => {
-        setSelectUSer(user);
-        postTchat(user);
-    };
-
-    function postTchat(message) {
-        console.log('message = ', message)
+    function postTchat() {
         const body = {
-            destName: message.pseudo,
-            destPic: message.userPic ? message.userPic : "",
-            destUserId: message.userId,
+            destName: actuallMessage.pseudo,
+            destPic: actuallMessage.userPic ? actuallMessage.userPic : "",
+            destUserId: actuallMessage.userId,
             name: userData.pseudo,
             profilePic: userData.profilePic
         }
@@ -80,9 +74,11 @@ export default function Home() {
             });
     }
 
-    const handleClose = () => {
-        setOpenMenu(false)
-        setSelectUSer(null);
+    const handleMenu = (message) => {
+        if (message.userId !== userData.userId) {
+            setActuallMessage(message)
+            setOpenMenu(!openMenu)
+        }
     };
 
     const config = {
@@ -162,18 +158,17 @@ export default function Home() {
                             timeline.map((message) =>
                                 <Grid item xs={12}>
                                     <div className={classes.messageWrapper}>
-                                        <Avatar alt="message" src={message.userPic ? message.userPic : ""} className={classes.avatar} onClick={() => postTchat(message)}>
-                                            {/* <Menu
+                                        <Avatar alt="message" src={message.userPic ? message.userPic : ""} className={classes.avatar} onClick={() => handleMenu(message)} />
+                                            <Menu
                                                 id="simple-menu"
                                                 keepMounted
                                                 open={openMenu}
-                                                onClose={handleClose}
+                                                onClose={handleMenu}
                                             >
-                                                <MenuItem onClick={() => {console.log(message);postTchat(message.userId)}}>
+                                                <MenuItem onClick={() => postTchat()}>
                                                     Envoyer un message privé
                                                 </MenuItem>
-                                            </Menu> */}
-                                        </Avatar>
+                                            </Menu>
                                         <p className={classes.pseudo}>{message.pseudo}</p>
                                     </div>
                                     <p className={classes.comment}>{message.comment}</p>

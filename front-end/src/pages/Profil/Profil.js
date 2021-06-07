@@ -207,7 +207,6 @@ export default function Profil() {
                             onChange={(event) => setCountry(event.target.value)}
                         />
                     </FormControl>
-
                     {/* <IconButton color="primary" aria-label="upload picture" component="span">
                         <PhotoCamera className={classes.iconEditBackgroundPic} />
                     </IconButton>

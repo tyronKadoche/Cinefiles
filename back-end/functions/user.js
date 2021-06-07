@@ -81,9 +81,7 @@ exports.deleteWatchlist = (req, res) => {
     .where("movieId", "==", +movieId)
     .get()
     .then((doc) => {
-      // console.log(doc[0])
       doc.forEach((movie) => {
-        console.log("movie = ", movie.id);
         movieTable = movie.id;
       });
       return db
@@ -114,12 +112,15 @@ exports.postNotification = (req, res) => {
 exports.getNotification = (req, res) => {
   console.log("cmoiwesh")
   let userId = req.user.userId;
-  admin
-    .firestore()
-    .doc(`/user/${userId}/notification`)
-    .get()
+  let notifications = []
+
+
+  db.collection(`/user/${userId}/notification`).get()
     .then((doc) => {
-      return res.status(200).json(doc.data());
+      doc.forEach((notif) => {
+        notifications.push(notif.data())
+      })
+      return res.status(200).json(notifications);
     })
     .catch(function (error) {
       return res.status(400).json({
@@ -130,28 +131,26 @@ exports.getNotification = (req, res) => {
 }
 
 exports.deleteNotification = (req, res) => {
-  // const userId = req.user.userId;
-  // const movieId = req.params.movieId;
-  // let movieTable;
-  // console.log('movieId = ', typeof +movieId)
-  // db.collection(`/user/${userId}/watchlist`)
-  //   .where("movieId", "==", +movieId)
-  //   .get()
-  //   .then((doc) => {
-  //     // console.log(doc[0])
-  //     doc.forEach((movie) => {
-  //       console.log("movie = ", movie.id);
-  //       movieTable = movie.id;
-  //     });
-  //     return db
-  //       .doc(`/user/${userId}/watchlist/${movieTable}`)
-  //       .delete()
-  //   })
-  //   .then((doc) => {
-  //     return res.status(200).json({ message: "success" });
-  //   })
-  //   .catch(err => {
-  //     console.log('error = ', err)
-  //     return res.status(500).json({ message: err })
-  //   })
+  const userId = req.user.userId;
+  const notificationDate = req.params.notification;
+  let notificationTable;
+  db.collection(`/user/${userId}/notification`)
+    .where("notificationDate", "==", notificationDate)
+    .get()
+    .then((doc) => {
+      doc.forEach((notif) => {
+        console.log('notif ?? =', notif)
+        notificationTable = notif.id;
+      });
+      return db
+        .doc(`/user/${userId}/notification/${notificationTable}`)
+        .delete()
+    })
+    .then((doc) => {
+      return res.status(200).json({ message: "success" });
+    })
+    .catch(err => {
+      console.log('error = ', err)
+      return res.status(500).json({ message: err })
+    })
 }

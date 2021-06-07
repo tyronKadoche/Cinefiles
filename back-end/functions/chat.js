@@ -2,7 +2,7 @@ const { admin, db, fb } = require("./admin")
 
 exports.postMessages = async (req, res) => {
     const userId = req.user.userId;
-    const destUserId = req.body.userId;
+    const destUserId = req.body.destUserId;
     const chatId = req.body.chatId;
     const text = req.body.text;
     const createdAt = Date.now();
@@ -11,17 +11,19 @@ exports.postMessages = async (req, res) => {
         text,
         createdAt,
     };
-    await db.collection(`/user/${userId}/chats`).doc(chatId).update({
-        messages: admin.firestore.FieldValue.arrayUnion(message)
-    })
-    .catch(err => console.error(err))
-    await db.collection(`/user/${destUserId}/chats`).doc(chatId).update({
-        messages: admin.firestore.FieldValue.arrayUnion(message)
-    })
-    .then(() => {
-        return res.status(200);
-    })
-    .catch(err => console.error(err))
+    try {
+        await db.collection(`/user/${userId}/chats`).doc(chatId).update({
+            messages: admin.firestore.FieldValue.arrayUnion(message)
+        })
+        await db.collection(`/user/${destUserId}/chats`).doc(chatId).update({
+            messages: admin.firestore.FieldValue.arrayUnion(message)
+        })
+    }
+    catch {
+        console.log('error catch')
+    }
+    const chat = await db.collection(`/user/${userId}/chats`).doc(chatId).get()
+    return res.status(200).json(chat.data())
 }
 
 // cette fonction get tt les chats
@@ -52,6 +54,14 @@ exports.postChat = async (req, res) => {
     const destPic = req.body.destPic;
     const name = req.body.name;
     const profilePic = req.body.profilePic;
+    const chats = await db.collection(`/user/${userId}/chats`).get();
+    for (const chat of chats.docs) {
+        if (chat.data().destUserId === destUserId) {
+            return res.status(200).json({
+                chatId: chat.id,
+            });
+        }
+    }
 
     const doc = await db.collection(`/user/${userId}/chats`).add({
         destUserId: destUserId,
@@ -59,7 +69,7 @@ exports.postChat = async (req, res) => {
         destName: destName,
         messages: []
     })
-    await db.collection(`/user/${destUserId}/chats`).add({
+    await db.collection(`/user/${destUserId}/chats`).doc(doc.id).set({
         destUserId: userId,
         destPic: profilePic,
         destName: name,

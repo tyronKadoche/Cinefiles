@@ -54,7 +54,6 @@ export default function ChatSalon() {
             'Authorization': `Bearer ${token}`
         }
     }
-    const chatId = window.location.search.slice(8);
     const [conversation, setConversation] = useState();
     const [actualConversation, setActualConversation] = useState(null);
 
@@ -66,7 +65,6 @@ export default function ChatSalon() {
     function getChats() {
         axios.get("http://localhost:5000/cinefiles-12/europe-west1/api/user/chats", config)
             .then(function (res) {
-                console.log('getChats = ', res.data)
                 setConversation(res.data);
             })
             .catch(function (error) {
@@ -77,24 +75,31 @@ export default function ChatSalon() {
     function handleConversation(conversation) {
         history.push(`/chats?chatId=${conversation.docId}`)
         console.log('setAdcutalConeojbhfsd = ', conversation)
-        setActualConversation(conversation.messages)
+        setActualConversation(conversation)
     }
 
     return (
         <Grid container>
             <Grid item xs={2} lg={2} className={classes.sidebar}>
                 {
-                    conversation?.map((conversation, key) =>
+                    conversation && conversation[0] ?
+                    conversation.map((conversation, key) =>
                         <div key={key} className={classes.roomWrapper} onClick={() => handleConversation(conversation)}>
                             <Avatar alt="message" src={conversation.destPic ? conversation.destPic : ""} className={classes.avatar}></Avatar>
                             <p className={classes.pseudo}>{conversation.destName}</p>
                         </div>
-                    )
+                    ) :
+                        <h4 style={{ textAlign: "center", color: "#2b353e", marginTop: "16rem", marginBottom: "0" }}>Aucune Conversation.</h4>
                 }
             </Grid>
             <Grid item xs={10} lg={10}>
                 {
-                    actualConversation && <Messages actualConversation={actualConversation} />
+                    actualConversation ?
+                        <Messages actualConversation={actualConversation} /> :
+                    <>
+                            <h4 style={{ textAlign: "center", color: "#2b353e", marginTop: "16rem", marginBottom: "0"}}>Selectionner Conversation.</h4>
+                            <h4 style={{ textAlign: "center", color: "#2b353e", marginTop: "0rem"}}>Vous pouvez débuter une conversation depuis votre timeLine !</h4>
+                    </>
                 }
             </Grid>
         </Grid>

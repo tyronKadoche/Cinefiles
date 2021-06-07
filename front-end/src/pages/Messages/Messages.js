@@ -5,6 +5,8 @@ import { makeStyles, Grid, TextField, Avatar, Button } from '@material-ui/core';
 const useStyles = makeStyles((theme) => ({
     conversationWrapper: {
         height: "85vh",
+        overflowY: "scroll",
+
     },
     avatar: {
         width: "3rem",
@@ -34,7 +36,8 @@ const useStyles = makeStyles((theme) => ({
         display: "flex",
     },
     text: {
-        padding: "0.5rem",
+        padding: "0 0.5rem",
+        margin: "0.5rem 0",
     },
     sendedMessage: {
         margin: "0 1rem 0 4rem",
@@ -60,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function Messages({actualConversation}) {
+export default function Messages({ actualConversation }) {
     const classes = useStyles();
     const token = localStorage.token;
     const config = {
@@ -68,13 +71,13 @@ export default function Messages({actualConversation}) {
             'Authorization': `Bearer ${token}`
         }
     }
+
     const chatId = window.location.search.slice(8);
 
     const [userData, setUserData] = useState(null);
     const [conversation, setConversation] = useState(actualConversation);
     const [comment, setComment] = useState("");
 
-    console.log('actualConversation dans message = ', actualConversation)
     useEffect(() => {
         getUserData();
     }, [])
@@ -90,33 +93,21 @@ export default function Messages({actualConversation}) {
     }
 
     function postMessage() {
+        console.log('here ?')
         axios.post(`http://localhost:5000/cinefiles-12/europe-west1/api/messages`, {
             text: comment,
-            userId: conversation.destUserId,
-            chatId
-        },
-        config)
+            destUserId: conversation.destUserId,
+            chatId: chatId,
+        }, config)
             .then(function (res) {
                 setConversation(res.data)
+                setComment('')
             })
             .catch(function (error) {
-                console.log(error);
+                console.log("error => ", error);
             });
     }
 
-    // function getConversation() {
-    //     axios.post(`http://localhost:5000/cinefiles-12/europe-west1/api/chats`, {
-    //         chatId,
-    //     }, config)
-    //         .then(function (res) {
-    //             setConversation(res.data)
-    //         })
-    //         .catch(function (error) {
-    //             console.log(error);
-    //         });
-    // }
-
-    console.log("conversation", conversation)
     return (
         <>
             {
@@ -124,9 +115,9 @@ export default function Messages({actualConversation}) {
                 <Grid container>
                     <Grid item xs={12} lg={12} className={classes.conversationWrapper}>
                         {
-                            actualConversation?.map((message) =>
+                            conversation.messages?.map((message) =>
                                 <div className={message.userId === userData.userId ? classes.myMessages : classes.messages}>
-                                    <p>{message.text}</p>
+                                    <p className={classes.text}>{message.text}</p>
                                 </div>
                             )
                         }

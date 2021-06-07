@@ -98,6 +98,7 @@ export default function Explorer() {
     const [openRateModal, setOpenRateModal] = useState(false);
     const [refresh, setRefresh] = useState(true);
     const [page, setPage] = useState(1);
+    const [tmdbToken, setTmdbToken] = useState(null);
     const token = localStorage.token;
 
 
@@ -133,24 +134,14 @@ export default function Explorer() {
     };
 
     function createSession() {
-        const token = ""
-        axios.get(`https://api.themoviedb.org/3/authentication/guest_session/new?&api_key=${myApiKey}`)
+        axios.get(`https://api.themoviedb.org/3/authentication/token/new?api_key=${myApiKey}`)
         .then(res => {
-            return res.status
-        })
-
-        axios.get(`https://api.themoviedb.org/3/authentication/token/new?&api_key=${myApiKey}`)
-        .then(res => {
-            return res.status
-        })
-
-        const body = {
-            "request_token": token
-        }
-
-        axios.post(`https://api.themoviedb.org/3/authentication/session/new?&api_key=${myApiKey}`, body)
-        .then(res => {
-            return res.status
+            axios.post(`https://api.themoviedb.org/3/authentication/session/new?api_key=${myApiKey}`, { request_token: res.data.request_token } )
+                .then(res => {
+                    console.log('set 2 res = ', res)
+                    return res.status
+                })
+                .catch(e => console.log('error = ', e.message))
         })
     }
 
