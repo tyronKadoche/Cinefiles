@@ -93,7 +93,6 @@ export default function Messages({ actualConversation }) {
     }
 
     function postMessage() {
-        console.log('here ?')
         axios.post(`http://localhost:5000/cinefiles-12/europe-west1/api/messages`, {
             text: comment,
             destUserId: conversation.destUserId,

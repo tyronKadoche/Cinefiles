@@ -16,7 +16,15 @@ const useStyles = makeStyles((theme) => ({
         borderRadius: "12px",
         height: "1.5rem",
         width: "8rem",
+        position: "fixed",
+        bottom: 0,
+        marginLeft: "5rem",
     },
+    list: {
+        marginTop: "8rem",
+        width: "18rem",
+        position: "fixed",
+    }
 }));
 
 export default function Sidebar() {
@@ -31,7 +39,7 @@ export default function Sidebar() {
     return (
         <div class="sidebar-wrapper">
             <img class="logo" src={logo} alt="NOIMG"/>
-            <List>
+            <List className={classes.list}>
                 {routes.map((element) => (
                     <ListItem button key={element.id} class="button-wrapper">
                         <Link to={element.route} class="sidebar-menu-item-wrapper">

@@ -29,4 +29,6 @@
     margin-left: 3rem;
     margin-right: 3rem;
     margin-top: 1rem;
+    position: fixed;
+    width: 12rem;
 }

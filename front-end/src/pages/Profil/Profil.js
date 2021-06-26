@@ -207,14 +207,6 @@ export default function Profil() {
                             onChange={(event) => setCountry(event.target.value)}
                         />
                     </FormControl>
-                    {/* <IconButton color="primary" aria-label="upload picture" component="span">
-                        <PhotoCamera className={classes.iconEditBackgroundPic} />
-                    </IconButton>
-
-                    <input accept="image/*" className={classes.input} id="icon-button-file" type="file" />
-                    <IconButton color="primary" aria-label="upload picture" component="span">
-                        <PhotoCamera className={classes.iconEditProfilePic} />
-                    </IconButton> */}
                     <Button className={classes.formularValidationButton} onClick={() => {
                             handleModal();
                             putUserData();

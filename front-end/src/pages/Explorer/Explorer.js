@@ -138,7 +138,6 @@ export default function Explorer() {
         .then(res => {
             axios.post(`https://api.themoviedb.org/3/authentication/session/new?api_key=${myApiKey}`, { request_token: res.data.request_token } )
                 .then(res => {
-                    console.log('set 2 res = ', res)
                     return res.status
                 })
                 .catch(e => console.log('error = ', e.message))
@@ -180,8 +179,10 @@ export default function Explorer() {
         }
         axios.post(`http://localhost:5000/cinefiles-12/europe-west1/api/user/notification`, body, config)
             .then(res => {
-                console.log('notification = ', res.data)
             })
+            .catch(function (error) {
+                console.log(error);
+            });
     }
 
     function addToWatchlist(movie) {
@@ -196,9 +197,11 @@ export default function Explorer() {
         axios.post(`http://localhost:5000/cinefiles-12/europe-west1/api/user/watchlist`, body, config)
         .then(res => {
             postNotification(movie)
-            console.log('res.data from add to watchlist = ', res.data)
             setRefresh(true);
         })
+        .catch(function (error) {
+            console.log(error);
+        });
     }
 
     useEffect(() => {

@@ -130,7 +130,6 @@ export default function WatchList() {
     }
     axios.post(`http://localhost:5000/cinefiles-12/europe-west1/api/user/notification`, body, config)
       .then(res => {
-        console.log('notification = ', res.data)
       })
   }
 

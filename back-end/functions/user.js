@@ -52,9 +52,9 @@ exports.postMyWatchlist = (req, res) => {
   const userId = req.user.userId;
   const movieId = req.body.movieId;
 
-  db.collection(`/user/${userId}/watchlist`).doc().set({movieId})
+  db.collection(`/user/${userId}/watchlist`).add({movieId})
     .then((doc) => {
-      return res.status(200).json(doc.data());
+      return res.status(200).json(doc.id);
     })
     .catch(err => console.error(err))
 }
@@ -102,20 +102,20 @@ exports.postNotification = (req, res) => {
   const notificationStatus = req.body.notificationStatus;
   const notificationDate = req.body.notificationDate;
 
-  db.collection(`/user/${userId}/notification`).doc().set({ notificationStatus, notificationDate })
+  db.collection(`/user/${userId}/notification`).add({ notificationStatus, notificationDate })
     .then((doc) => {
-      return res.status(200).json(doc.data());
+      return res.status(200).json(doc.id);
     })
     .catch(err => console.error(err))
 }
 
 exports.getNotification = (req, res) => {
-  console.log("cmoiwesh")
   let userId = req.user.userId;
   let notifications = []
 
 
-  db.collection(`/user/${userId}/notification`).get()
+  db.collection(`/user/${userId}/notification`)
+    .orderBy("notificationDate", "desc").get()
     .then((doc) => {
       doc.forEach((notif) => {
         notifications.push(notif.data())
@@ -139,7 +139,6 @@ exports.deleteNotification = (req, res) => {
     .get()
     .then((doc) => {
       doc.forEach((notif) => {
-        console.log('notif ?? =', notif)
         notificationTable = notif.id;
       });
       return db

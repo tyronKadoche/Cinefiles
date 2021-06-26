@@ -54,14 +54,12 @@ export default function Notifications() {
     }
 
     function deleteNotification(notif) {
-        console.log('notif = ', notif);
         axios
             .delete(
                 `http://localhost:5000/cinefiles-12/europe-west1/api/user/notification/${notif.notificationDate}`,
                 config
             )
             .then(function (res) {
-                console.log("Deleted element", res.data);
                 setRefresh(true);
             })
             .catch(function (error) {

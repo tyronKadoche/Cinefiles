@@ -74,7 +74,6 @@ export default function ChatSalon() {
 
     function handleConversation(conversation) {
         history.push(`/chats?chatId=${conversation.docId}`)
-        console.log('setAdcutalConeojbhfsd = ', conversation)
         setActualConversation(conversation)
     }
 
